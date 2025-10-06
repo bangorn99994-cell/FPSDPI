@@ -1,0 +1,15 @@
+settings put system ro.cpu.powersave_method off
+settings put system ro.cpu.powersave_frequency_mode 0
+settings put system ro.cpu.performance_mode 2
+settings put system ro.gpu.powersave_frequency_mode 0
+settings put system ro.gpu.performance_mode 2
+settings put system ro.gpu.powersave_method off
+settings put system ro.cpu.custom_method performance
+settings put system ro.gpu.custom_method performance
+settings put system ro.performance_mode 2
+settings put system ro.custom_android_perf high
+settings put system ro.custom_android_high_priority performance
+settings put system ro.android.custom_run_mode perf
+settings put system ro.android.status adjusted
+settings put system ro.android.priority_mod performance
+settings put system ro.android.performance.settings enabled

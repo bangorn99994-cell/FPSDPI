@@ -1,0 +1,10 @@
+settings put system sys.logdsize 0
+settings put system logd.total.size 0
+settings put system enable.logs 0
+settings put system persist.sys.logd.enabled false
+settings put system ro.logd.size 0
+settings put system logcat.live disable
+settings put system logd.status stopped
+settings put system logcat.status stopped
+settings put system ro.logdsize.main 0
+settings put system ro.default.logdsize 0

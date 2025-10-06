@@ -1,0 +1,7 @@
+       settings put system high.fps_mode enabled
+settings put system fps.priority 1
+settings put system ro.config.high.fps_set true
+settings put system high.fps_config enable
+settings put system enable.sys.high_frame 1
+settings put system ro.sys.enable_high_fps_config 1
+settings put system ro.sys.enable.high.fps_tweaks true

@@ -1,0 +1,48 @@
+setprop debug.performance_schema 1
+
+setprop debug.performance_schema_max_memory_classes 320
+
+setprop debug.performance_schema_max_socket_classes 10
+
+setprop debug.redroid.fps 120; setprop debug.sf.early_app_phase_offset_ns 500000
+
+setprop debug.sf.early_gl_app_phase_offset_ns 15000000
+
+setprop debug.sf.early_gl_phase_offset_ns 3000000
+
+setprop debug.sf.early_phase_offset_ns 500000
+
+setprop debug.sf.enable_gl_backpressure 1
+
+setprop debug.sf.high_fps_early_gl_phase_offset_ns 9000000
+
+setprop debug.sf.high_fps_early_phase_offset_ns 6100000
+
+setprop debug.composition.type gpu,cpu,c2d,performance,speed
+
+setprop debug.sf.enable_hgl 1
+
+setprop debug.choreographer.skipwarning 12500000
+
+setprop debug.sf.enable_hgl 1
+
+setprop debug.egl.hw 1
+
+setprop debug.gpu3D_MinClock 64
+
+setprop debug.hwui.fps_divisor -1
+
+setprop debug.cpurend.vsync true
+
+setprop debug.gpurend.vsync true
+
+setprop debug.cpuprio 10
+
+setprop debug.gpuprio 10
+
+setprop debug.ioprio 10
+
+setprop debug.hwui.target_cpu_time_percent 200 
+
+setprop debug.hwui.target_gpu_time_percent 200
+
