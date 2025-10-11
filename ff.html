@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Panel — Hacker UI (UI Mockup)</title>
+<style>
+  :root{
+    --accent:#00ff9f; --accent2:#00d4ff; --bg:#05060a; --panel-bg:rgba(0,0,0,0.66);
+    --danger:#ff4d4f;
+  }
+  *{box-sizing:border-box;font-family:Inter, "Segoe UI", Roboto, sans-serif;}
+  html,body{height:100%;margin:0;background:#000;color:#e6eef8;}
+  .bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:radial-gradient(ellipse at center, rgba(0,0,0,0.25), transparent 40%);}
+  .binary{position:absolute;inset:0;font-family:monospace;font-size:14px;line-height:18px;color:rgba(0,255,127,0.06);letter-spacing:4px;}
+  .binary::before,.binary::after{content:"";position:absolute;inset:0;background-image:linear-gradient(transparent, rgba(0,0,0,0.15)),repeating-linear-gradient(0deg, rgba(0,255,127,0.03) 0 1px, transparent 1px 4px);animation:flicker 6s linear infinite;mix-blend-mode:screen;pointer-events:none;}
+  @keyframes flicker{0%{transform:translateY(0)}100%{transform:translateY(-100%)}}
+
+  .wrap{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;height:100vh;padding:20px;}
+  .panel{width:420px;background:var(--panel-bg);border-radius:12px;padding:18px;backdrop-filter:blur(6px);box-shadow:0 10px 50px rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.03);}
+
+  .title{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#001;}
+  .title h1{font-size:18px;margin:0}
+  .subtitle{color:#9fb6c8;font-size:12px;margin-top:4px}
+
+  .control{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:10px;padding:12px;margin-top:10px;border:1px solid rgba(0,255,127,0.06);}
+
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .label{font-size:13px;color:#cfeff0}
+
+  .faux-checkbox{display:inline-flex;align-items:center;gap:10px;}
+  .switch{--w:46px;--h:26px;width:var(--w);height:var(--h);background:rgba(255,255,255,0.06);border-radius:999px;padding:3px;position:relative;cursor:pointer;transition:all .18s ease;border:1px solid rgba(255,255,255,0.03);}
+  .knob{width:20px;height:20px;background:white;border-radius:50%;transform:translateX(0);transition:transform .18s cubic-bezier(.2,.9,.2,1);box-shadow:0 4px 12px rgba(0,0,0,0.45),0 0 8px rgba(0,255,159,0.06);}
+  .switch.on{background:linear-gradient(90deg,#00ff9f,#00d4ff);}
+  .switch.on .knob{transform:translateX(20px);background:#001824;box-shadow:0 6px 18px rgba(0,0,0,0.5);}
+
+  .meter{margin-top:10px;display:flex;gap:10px;align-items:center;}
+  .bar{height:12px;background:rgba(255,255,255,0.06);border-radius:999px;width:220px;overflow:hidden;position:relative;}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,#00ff9f,#00d4ff);width:10%;transition:width .45s ease;}
+  .small{font-size:12px;color:#9fb6c8;}
+  .note{font-size:12px;color:#7fa4b6;margin-top:12px;opacity:0.95;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);}
+
+  .controls-row{display:flex;gap:8px;margin-top:12px;justify-content:space-between;align-items:center;}
+  .btn{padding:8px 12px;border-radius:8px;cursor:pointer;border:none;font-weight:700;background:linear-gradient(90deg,#00b2ff,#00ffb3);color:#021;box-shadow:0 8px 20px rgba(0,200,255,0.07);}
+  .btn.ghost{background:transparent;color:#9fb6c8;border:1px solid rgba(255,255,255,0.03);box-shadow:none;}
+  .btn.warn{background:linear-gradient(90deg,#ff9e5f,#ff5f8a);color:#111;}
+
+  /* danger state */
+  .danger-glow{box-shadow:0 0 18px rgba(255,77,79,0.65), inset 0 0 12px rgba(255,77,79,0.12); border:1px solid rgba(255,77,79,0.25);}
+
+  /* modal */
+  .modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);background:linear-gradient(180deg,#071021,#031018);padding:16px;border-radius:10px;border:1px solid rgba(0,255,127,0.07);box-shadow:0 18px 60px rgba(0,0,0,0.6);z-index:60;min-width:320px;display:none;}
+  .modal.show{display:block;animation:pop .14s ease;transform:translate(-50%,-50%) scale(1);}
+  @keyframes pop{from{opacity:0;transform:translate(-50%,-50%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+  .modal h3{margin:0 0 8px 0;color:#bfffe8}
+  .modal .desc{color:#9fb6c8;font-size:13px;margin-bottom:10px}
+  .modal .opt{display:flex;gap:10px;flex-direction:column;margin-bottom:12px}
+  .opt label{display:flex;align-items:center;gap:8px;font-size:14px;color:#d6f7ea}
+
+  /* small footer disclaimer */
+  .disclaimer{position:fixed;left:12px;bottom:12px;z-index:70;background:rgba(255,0,0,0.02);padding:8px;border-radius:6px;border:1px solid rgba(255,0,0,0.03);color:#ffd1d1;font-size:12px}
+
+  @media(max-width:480px){.panel{width:94%}}
+</style>
+</head>
+<body>
+  <div class="bg"><div class="binary" aria-hidden="true"><pre id="binaryText"></pre></div></div>
+
+  <div class="wrap">
+    <div class="panel" role="region" aria-label="Hacker Panel">
+      <div class="title">
+        <div class="logo">101</div>
+        <div>
+          <h1>Hacker UI — Panel</h1>
+          <div class="subtitle">หน้าต่างดีไซน์ (UI)</div>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="row">
+          <div>
+            <div class="label">Auto ดูดหัว</div>
+            <div class="small">ติ๊กเพื่อยืนยัน (UI เท่านั้น)</div>
+          </div>
+          <div class="faux-checkbox">
+            <div id="switch" class="switch" tabindex="0" role="switch" aria-checked="false"><div class="knob"></div></div>
+          </div>
+        </div>
+
+        <div class="meter">
+          <div style="min-width:64px" class="label small">ความเร็ว</div>
+          <div class="bar" id="speedBarWrap"><i id="speedBar" style="width:12%"></i></div>
+          <div style="min-width:64px;text-align:right" class="label small" id="speedVal">12 / 100</div>
+        </div>
+
+        <div class="meter" style="margin-top:8px">
+          <div style="min-width:64px" class="label small">CPU</div>
+          <div class="bar" id="cpuBarWrap"><i id="cpuBar" style="width:8%"></i></div>
+          <div style="min-width:64px;text-align:right" class="label small" id="cpuVal">8 / 100</div>
+        </div>
+
+        <div class="controls-row">
+          <div style="display:flex;gap:8px">
+            <button id="btnFps" class="btn">เพิ่ม FPS</button>
+            <button id="btnCpu" class="btn">เพิ่ม CPU</button>
+            <button id="btnRun" class="btn warn">รันโค้ดเกม</button>
+          </div>
+          <div>
+            <button id="applyBtn" class="btn ghost">ตกลง</button>
+          </div>
+        </div>
+
+        <div class="note" id="statusNote">สถานะ: พร้อมใช้งาน (UI)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal ยืนยันสำหรับ switch -->
+  <div id="modalSwitch" class="modal" aria-hidden="true">
+    <h3>ยืนยันการเปิดฟังก์ชัน</h3>
+    <div class="desc">คุณต้องการเปิด "Auto ดูดหัว" หรือไม่? การตั้งค่านี้เป็นเพียง UI เท่านั้น</div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button id="cancelSwitch" class="btn ghost">ยกเลิก</button>
+      <button id="confirmSwitch" class="btn">ตกลง</button>
+    </div>
+  </div>
+
+  <!-- Modal สำหรับรันโค้ดเกม (ตัวเลือก 3 อย่าง) -->
+  <div id="modalRun" class="modal" aria-hidden="true">
+    <h3>ตัวเลือกการรัน</h3>
+    <div class="desc">เลือกสิ่งที่ต้องการจะ "รัน" ใน UI นี้ (เป็นเพียงตัวอย่างเท่านั้น)</div>
+    <div class="opt">
+      <label><input type="checkbox" id="optBox" /> ตู้ล็อคออโต้</label>
+      <label><input type="checkbox" id="optLock" /> ล็อกหัว</label>
+      <label><input type="checkbox" id="opt99" /> ออโต้ 99</label>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button id="cancelRun" class="btn ghost">ยกเลิก</button>
+      <button id="confirmRun" class="btn">ยืนยัน</button>
+    </div>
+  </div>
+
+  <div class="disclaimer">หมายเหตุสำคัญ: หน้านี้เป็นอินเทอร์เฟซแบบจำลอง (UI) เท่านั้น — ไม่มีการเชื่อมต่อกับเกมหรือควบคุมฮาร์ดแวร์จริง</div>
+
+<script>
+  // สร้าง binary ขึ้นมาเพื่อเอฟเฟกต์
+  (function populateBinary(){
+    const p = document.getElementById('binaryText');
+    const lines = 80; let out='';
+    for(let i=0;i<lines;i++){
+      let line=''; const len = Math.floor(Math.random()*80)+20;
+      for(let j=0;j<len;j++){ line += Math.random()>0.5 ? '1' : '0'; }
+      out += line + '\\n';
+    }
+    p.textContent = out;
+    p.style.position='absolute'; p.style.left='8px'; p.style.top='0';
+    let top=0;
+    setInterval(()=>{ top -= 1; if(top < -1000) top = 0; p.style.transform = 'translateY('+top+'px)'; }, 80);
+  })();
+
+  // องค์ประกอบ UI
+  const sw = document.getElementById('switch');
+  const modalSwitch = document.getElementById('modalSwitch');
+  const confirmSwitch = document.getElementById('confirmSwitch');
+  const cancelSwitch = document.getElementById('cancelSwitch');
+
+  const speedBar = document.getElementById('speedBar');
+  const cpuBar = document.getElementById('cpuBar');
+  const speedVal = document.getElementById('speedVal');
+  const cpuVal = document.getElementById('cpuVal');
+  const statusNote = document.getElementById('statusNote');
+
+  const btnFps = document.getElementById('btnFps');
+  const btnCpu = document.getElementById('btnCpu');
+  const btnRun = document.getElementById('btnRun');
+  const modalRun = document.getElementById('modalRun');
+  const cancelRun = document.getElementById('cancelRun');
+  const confirmRun = document.getElementById('confirmRun');
+
+  let switchOn = false;
+
+  // สวิตช์ — เปิด modal ยืนยัน
+  sw.addEventListener('click', ()=> {
+    if(!switchOn){
+      modalSwitch.classList.add('show'); modalSwitch.setAttribute('aria-hidden','false');
+    } else {
+      setSwitch(false);
+    }
+  });
+  cancelSwitch.addEventListener('click', ()=> { modalSwitch.classList.remove('show'); modalSwitch.setAttribute('aria-hidden','true'); });
+  confirmSwitch.addEventListener('click', ()=> { modalSwitch.classList.remove('show'); modalSwitch.setAttribute('aria-hidden','true'); setSwitch(true); });
+
+  function setSwitch(val){
+    switchOn = !!val;
+    if(switchOn){
+      sw.classList.add('on'); sw.setAttribute('aria-checked','true');
+      statusNote.textContent = 'สถานะ: Auto ดูดหัว ถูกเปิด (UI)';
+      // เปิดค่อย ๆ ไปถึงค่ากลาง/สูงตามดีไซน์
+      animateTo(90, 30); // ไม่ถึง 100 โดยตรงสำหรับสวิตช์
+    } else {
+      sw.classList.remove('on'); sw.setAttribute('aria-checked','false');
+      statusNote.textContent = 'สถานะ: ปิด';
+      animateTo(12,8);
+    }
+  }
+
+  // ปุ่ม "เพิ่ม FPS" / "เพิ่ม CPU" -> ทำให้ถึง 100 และแสดง "เดือดร้อน" เมื่อ CPU=100
+  btnFps.addEventListener('click', ()=> {
+    // ยืนยันก่อนทำ action ใน UI
+    if(confirm('ต้องการเพิ่ม FPS ให้เต็ม (UI) หรือไม่?')) {
+      animateTo(100, parseInt(cpuVal.textContent) || 8, {dangerOnSpeed:true});
+      statusNote.textContent = 'สถานะ: เพิ่ม FPS — ค่าสปีดไปที่ 100 (UI)';
+    }
+  });
+
+  btnCpu.addEventListener('click', ()=> {
+    if(confirm('ต้องการเพิ่มการใช้ CPU ให้เต็ม (UI) หรือไม่?')) {
+      animateTo(parseInt(speedVal.textContent) || 12, 100, {dangerOnCpu:true});
+      statusNote.textContent = 'สถานะ: เพิ่ม CPU — CPU ไปที่ 100 (UI)';
+    }
+  });
+
+  // ปุ่ม "รันโค้ดเกม" -> modal ตัวเลือก 3 อย่าง
+  btnRun.addEventListener('click', ()=> {
+    modalRun.classList.add('show'); modalRun.setAttribute('aria-hidden','false');
+  });
+  cancelRun.addEventListener('click', ()=> { modalRun.classList.remove('show'); modalRun.setAttribute('aria-hidden','true'); });
+
+  confirmRun.addEventListener('click', ()=> {
+    const box = document.getElementById('optBox').checked;
+    const lock = document.getElementById('optLock').checked;
+    const a99 = document.getElementById('opt99').checked;
+    modalRun.classList.remove('show'); modalRun.setAttribute('aria-hidden','true');
+
+    // แสดงการยืนยันและอัพเดตสถานะใน UI
+    const sel = [];
+    if(box) sel.push('ตู้ล็อคออโต้');
+    if(lock) sel.push('ล็อกหัว');
+    if(a99) sel.push('ออโต้ 99');
+    if(sel.length===0){
+      alert('ยกเลิก: ไม่มีตัวเลือกถูกเลือก');
+      statusNote.textContent = 'สถานะ: ยกเลิกการรัน';
+      return;
+    }
+    // แจ้งผลการเลือก (UI เท่านั้น)
+    alert('ยืนยัน: รันตัวเลือก — ' + sel.join(', ') + ' (UI เท่านั้น)');
+    statusNote.textContent = 'สถานะ: รันตัวเลือก — ' + sel.join(', ');
+    // ถ้าผู้ใช้เลือกออโต้ 99 ให้เร่งสปีดด้วยเป็นตัวอย่าง
+    if(a99){ animateTo(100, 85, {dangerOnSpeed:true}); }
+    if(box){ animateTo(80, 65); }
+    if(lock){ animateTo(85, 70); }
+  });
+
+  // ฟังก์ชันแอนิเมตค่า speed/cpu ไปยัง target
+  // options: {dangerOnCpu:boolean, dangerOnSpeed:boolean}
+  function animateTo(targetSpeed, targetCpu, options = {}) {
+    const steps = 30;
+    const curSpeed = parseInt(speedBar.style.width) || Number((speedVal.textContent.match(/\\d+/)||[12])[0]);
+    const curCpu = parseInt(cpuBar.style.width) || Number((cpuVal.textContent.match(/\\d+/)||[8])[0]);
+    let s = curSpeed, c = curCpu;
+    const ds = (targetSpeed - s)/steps;
+    const dc = (targetCpu - c)/steps;
+    let i=0;
+    // clear danger states
+    document.getElementById('speedBarWrap').classList.remove('danger-glow');
+    document.getElementById('cpuBarWrap').classList.remove('danger-glow');
+
+    const t = setInterval(()=>{
+      i++;
+      s += ds; c += dc;
+      const sw = Math.round(Math.max(0, Math.min(100, s)));
+      const cw = Math.round(Math.max(0, Math.min(100, c)));
+      speedBar.style.width = sw + '%';
+      cpuBar.style.width = cw + '%';
+      speedVal.textContent = sw + ' / 100';
+      cpuVal.textContent = cw + ' / 100';
+
+      // เมื่อแตะ 100 ให้ขึ้น alert visual และ glow
+      if(options.dangerOnSpeed && sw >= 100){
+        document.getElementById('speedBarWrap').classList.add('danger-glow');
+        flashStatus('เดือดร้อน: ความเร็วถึง 100!', 2000);
+      }
+      if(options.dangerOnCpu && cw >= 100){
+        document.getElementById('cpuBarWrap').classList.add('danger-glow');
+        flashStatus('เดือดร้อน: CPU ใช้งานถึง 100!', 2000);
+      }
+
+      if(i>=steps) { clearInterval(t); }
+    }, 40);
+  }
+
+  // ช่วยกระพริบแสดงสถานะชั่วคราว
+  function flashStatus(text, ms=1500){
+    const prev = statusNote.textContent;
+    statusNote.textContent = text;
+    statusNote.classList.add('danger-glow');
+    setTimeout(()=>{ statusNote.textContent = prev; statusNote.classList.remove('danger-glow'); }, ms);
+  }
+
+  // เริ่มค่าเริ่มต้น
+  // set default bars
+  const initialSpeed = 12, initialCpu = 8;
+  document.getElementById('speedBar').style.width = initialSpeed + '%';
+  document.getElementById('cpuBar').style.width = initialCpu + '%';
+  document.getElementById('speedVal').textContent = initialSpeed + ' / 100';
+  document.getElementById('cpuVal').textContent = initialCpu + ' / 100';
+
+  // ป้องกันการใช้งานคีย์สุ่ม
+  window.addEventListener('click', (e)=> {
+    if(e.target === modalSwitch) { modalSwitch.classList.remove('show'); modalSwitch.setAttribute('aria-hidden','true'); }
+    if(e.target === modalRun) { modalRun.classList.remove('show'); modalRun.setAttribute('aria-hidden','true'); }
+  });
+</script>
+</body>
+  </html>
